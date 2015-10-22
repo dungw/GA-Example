@@ -1,5 +1,11 @@
 <?php namespace core;
 
+use Google_Client;
+use Google_Service_Analytics;
+use Google_Service_Exception;
+use Google_IO_Curl;
+use Google_Http_Request;
+
 class GA_Service
 {
     protected $client;
@@ -12,10 +18,152 @@ class GA_Service
 
     private function init()
     {
-        $this->client->setClientId(Config::get('analytics.client_id'));
-        $this->client->setClientSecret(Config::get('analytics.client_secret'));
-        $this->client->setDeveloperKey(Config::get('analytics.api_key'));
-        $this->client->setRedirectUri('http://localhost:8000/login');
-        $this->client->setScopes(array('https://www.googleapis.com/auth/analytics'));
+        $credential = Utils::getCredential();
+
+        if (!empty($credential)) {
+
+            $this->client->setClientId($credential['client_id']);
+            $this->client->setClientSecret($credential['client_secret']);
+            $this->client->setDeveloperKey($credential['api_key']);
+            $this->client->setRedirectUri('http://local.ga.com:8080/login.php');
+            $this->client->setScopes(array('https://www.googleapis.com/auth/analytics'));
+
+        } else {
+            throw new \Exception("You don't have credential");
+        }
+
+    }
+
+    public function isLoggedIn()
+    {
+        if (isset($_SESSION['token'])) {
+            $this->client->setAccessToken($_SESSION['token']);
+            return true;
+        }
+
+        return $this->client->getAccessToken();
+    }
+
+    public function login($code)
+    {
+        $this->client->authenticate($code);
+        $token = $this->client->getAccessToken();
+        $_SESSION['token'] = $token;
+
+        return $token;
+    }
+
+    public function getLoginUrl()
+    {
+        $authUrl = $this->client->createAuthUrl();
+        return $authUrl;
+    }
+
+    /********************* Part 2 *******************/
+
+    public function accounts()
+    {
+        if (!$this->isLoggedIn()) {
+            //login
+        }
+
+        $service = new Google_Service_Analytics($this->client);
+        $man_accounts = $service->management_accounts->listManagementAccounts();
+        $accounts = [];
+
+        foreach ($man_accounts['items'] as $account) {
+            $accounts[] = ['id' => $account['id'], 'name' => $account['name']];
+        }
+
+        return $accounts;
+    }
+
+    public function properties($account_id)
+    {
+        if (!$this->isLoggedIn()) {
+            //login
+        }
+
+        try {
+            $service = new Google_Service_Analytics($this->client);
+            $man_properties = $service->management_webproperties->listManagementWebproperties($account_id);
+            $properties = [];
+
+            foreach ($man_properties['items'] as $property) {
+                $properties[] = ['id' => $property['id'], 'name' => $property['name']];
+            }
+
+            return json_encode($properties);
+        } catch (Google_Service_Exception $e) {
+
+            return json_encode([
+                'status' => 0,
+                'code' => 3,
+                'message' => $e->getMessage()
+            ]);
+        }
+
+    }
+
+    public function views($account_id, $property_id)
+    {
+        if (!$this->isLoggedIn()) {
+            //login
+        }
+
+        try {
+            $service = new Google_Service_Analytics($this->client);
+            $man_views = $service->management_profiles->listManagementProfiles($account_id, $property_id);
+            $views = [];
+
+            foreach ($man_views['items'] as $view) {
+                $views[] = ['id' => $view['id'], 'name' => $view['name']];
+            }
+
+            return json_encode($views);
+        } catch (Google_Service_Exception $e) {
+
+            return json_encode([
+                'status' => 0,
+                'code' => 3,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function metadata()
+    {
+        $gcurl = new Google_IO_Curl($this->client);
+
+        $response = $gcurl->makeRequest(
+            new Google_Http_Request("https://www.googleapis.com/analytics/v3/metadata/ga/columns")
+        );
+
+        //verify returned data
+        $data = json_decode($response->getResponseBody());
+
+        $items = $data->items;
+        $data_items = [];
+        $dimensions_data = [];
+        $metrics_data = [];
+
+        foreach ($items as $item) {
+            if ($item->attributes->status == 'DEPRECATED')
+                continue;
+
+            if ($item->attributes->type == 'DIMENSION')
+                $dimensions_data[$item->attributes->group][] = $item;
+
+            if ($item->attributes->type == 'METRIC')
+                $metrics_data[$item->attributes->group][] = $item;
+        }
+
+        $data_items['dimensions'] = $dimensions_data;
+        $data_items['metrics'] = $metrics_data;
+
+        return $data_items;
     }
 }
+
+
+

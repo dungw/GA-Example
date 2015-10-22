@@ -2357,5 +2357,6 @@ return array(
     'Google_Verifier_Abstract' => $vendorDir . '/google/apiclient/src/Google/Verifier/Abstract.php',
     'Google_Verifier_Pem' => $vendorDir . '/google/apiclient/src/Google/Verifier/Pem.php',
     'core\\GA_Service' => $baseDir . '/core/GA_Service.php',
-    'core\\utils\\Utils' => $baseDir . '/core/utils/Config.php',
+    'core\\Utils' => $baseDir . '/core/Utils.php',
+    'core\\controller\\IndexController' => $baseDir . '/core/controller/IndexController.php',
 );
