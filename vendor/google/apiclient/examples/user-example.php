@@ -26,9 +26,9 @@ require_once 'Google/Service/Urlshortener.php';
   the redirect URI is to this page, e.g:
   http://localhost:8080/user-example.php
  ************************************************/
- $client_id = '<YOUR_CLIENT_ID>';
- $client_secret = '<YOUR_CLIENT_SECRET>';
- $redirect_uri = '<YOUR_REDIRECT_URI>';
+ $client_id = '271013322891-0srhnrteboo2vbchh5gqics62voso8l2.apps.googleusercontent.com';
+ $client_secret = 'jaPE39sFwRvG_ykpnKGO6_VN';
+ $redirect_uri = 'http://local.ga.com:8080/login.php';
 
 /************************************************
   Make an API request on behalf of a user. In

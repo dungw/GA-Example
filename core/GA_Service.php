@@ -163,6 +163,50 @@ class GA_Service
 
         return $data_items;
     }
+
+    public function report($view, $dimensions, $metrics)
+    {
+        // to make the request quicker
+        $max_results = 10;
+
+        // query the last month analytics
+        $now = new \DateTime();
+        $end_date = $now->format('Y-m-d');
+        $start_date = $now->modify('-1 month')->format('Y-m-d');
+
+        // if( !is_array( $dimensions ) )
+        // 	$dimensions = array( $dimensions );
+        $dimensions = implode(",", $dimensions);
+        $metrics = implode(",", $metrics);
+
+        try {
+            $analytics = new Google_Service_Analytics($this->client);
+            $options = [];
+
+            $options['dimensions'] = $dimensions;
+            $options['max-results'] = $max_results;
+
+            $data = $analytics->data_ga->get($view, $start_date, $end_date, $metrics,
+                $options
+            );
+
+            $res = [
+                'items' => isset($data['rows']) ? $data['rows'] : [],
+                'columnHeaders' => $data['columnHeaders'],
+                'totalResults' => $data['totalResults']
+            ];
+
+        } catch (Google_Service_Exception $ex) {
+            return json_encode([
+                'status' => 0,
+                'code' => 2,
+                'message' => 'Google analytics internal server error: (Technical details) ' . $ex->getErrors()[0]['message']
+            ]);
+        }
+
+        return $res;
+    }
+
 }
 
 

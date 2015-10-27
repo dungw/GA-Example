@@ -59,5 +59,32 @@ class IndexController
         return $metadata;
     }
 
+    public function report()
+    {
+        if (!$this->ga->isLoggedIn())
+            return json_encode([
+                'status' => 0,
+                'code' => 1,
+                'message' => 'Login required'
+            ]);
+
+        $dimensions = isset($_GET['dimensions']) ? $_GET['dimensions'] : (isset($_POST['dimensions']) ? $_POST['dimensions'] : '');
+        $metrics = isset($_GET['metrics']) ? $_GET['metrics'] : (isset($_POST['metrics']) ? $_POST['metrics'] : '');
+        $view = isset($_GET['view']) ? $_GET['view'] : (isset($_POST['view']) ? $_POST['view'] : '');
+
+        if (!$dimensions || !$metrics || !$view)
+            return json_encode([
+                'status' => 0,
+                'code' => 1,
+                'message' => 'Invalid request parametter'
+            ]);
+
+        $view = 'ga:' . $view;
+
+        $report = $this->ga->report($view, $dimensions, $metrics);
+
+        return $report;
+    }
+
 }
 
