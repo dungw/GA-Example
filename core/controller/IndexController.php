@@ -22,9 +22,6 @@ class IndexController
     {
         if ($this->ga->isLoggedIn()) {
 
-            print 'Show home page';
-
-
         } else {
             $url = $this->ga->getLoginUrl();
             header("Location: " . $url);
@@ -59,7 +56,7 @@ class IndexController
         return $metadata;
     }
 
-    public function report()
+    public function report($dimensions, $metrics, $viewID)
     {
         if (!$this->ga->isLoggedIn())
             return json_encode([
@@ -68,23 +65,25 @@ class IndexController
                 'message' => 'Login required'
             ]);
 
-        $dimensions = isset($_GET['dimensions']) ? $_GET['dimensions'] : (isset($_POST['dimensions']) ? $_POST['dimensions'] : '');
-        $metrics = isset($_GET['metrics']) ? $_GET['metrics'] : (isset($_POST['metrics']) ? $_POST['metrics'] : '');
-        $view = isset($_GET['view']) ? $_GET['view'] : (isset($_POST['view']) ? $_POST['view'] : '');
-
-        if (!$dimensions || !$metrics || !$view)
+        if (!$dimensions || !$metrics || !$viewID)
             return json_encode([
                 'status' => 0,
                 'code' => 1,
                 'message' => 'Invalid request parametter'
             ]);
 
-        $view = 'ga:' . $view;
+        $view = 'ga:' . $viewID;
 
         $report = $this->ga->report($view, $dimensions, $metrics);
 
         return $report;
     }
 
+    public function segments()
+    {
+        $segments = $this->ga->segments();
+
+        return $segments;
+    }
 }
 

@@ -8,6 +8,8 @@ use Google_Http_Request;
 
 class GA_Service
 {
+    const MAX_RESULTS = 100;
+
     protected $client;
 
     public function __construct(Google_Client $client)
@@ -167,7 +169,7 @@ class GA_Service
     public function report($view, $dimensions, $metrics)
     {
         // to make the request quicker
-        $max_results = 10;
+        $max_results = self::MAX_RESULTS;
 
         // query the last month analytics
         $now = new \DateTime();
@@ -207,6 +209,17 @@ class GA_Service
         return $res;
     }
 
+    public function segments()
+    {
+        if (!$this->isLoggedIn()) {
+            //login
+        }
+
+        $service = new Google_Service_Analytics($this->client);
+        $segments = $service->management_segments->listManagementSegments();
+
+        return $segments;
+    }
 }
 
 
