@@ -1,4 +1,5 @@
-<?php namespace core;
+<?php
+namespace core;
 
 use Google_Client;
 use Google_Service_Analytics;
@@ -8,7 +9,7 @@ use Google_Http_Request;
 
 class GA_Service
 {
-    const MAX_RESULTS = 100;
+    const MAX_RESULTS = 1000;
 
     protected $client;
 
@@ -166,7 +167,7 @@ class GA_Service
         return $data_items;
     }
 
-    public function report($view, $dimensions, $metrics)
+    public function report($view, $dimensions, $metrics, $addition = [])
     {
         // to make the request quicker
         $max_results = self::MAX_RESULTS;
@@ -187,6 +188,9 @@ class GA_Service
 
             $options['dimensions'] = $dimensions;
             $options['max-results'] = $max_results;
+
+            //add order by
+            if (isset($addition['sort'])) $options['sort'] = $addition['sort'];
 
             $data = $analytics->data_ga->get($view, $start_date, $end_date, $metrics,
                 $options

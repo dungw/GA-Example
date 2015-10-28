@@ -56,7 +56,7 @@ class IndexController
         return $metadata;
     }
 
-    public function report($dimensions, $metrics, $viewID)
+    public function report($dimensions, $metrics, $viewID, $options=[])
     {
         if (!$this->ga->isLoggedIn())
             return json_encode([
@@ -74,7 +74,7 @@ class IndexController
 
         $view = 'ga:' . $viewID;
 
-        $report = $this->ga->report($view, $dimensions, $metrics);
+        $report = $this->ga->report($view, $dimensions, $metrics, $options);
 
         return $report;
     }
