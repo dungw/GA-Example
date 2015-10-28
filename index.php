@@ -56,25 +56,25 @@ $orderRules = ['-'];
 $options['sort'] = Utils::encodeOrderby(Utils::groupOrderby($orders, $orderRules));
 
 //define filters
-$dimensionShow = ['show', 'dshow'];
-$dimensionFilters = ['ga:keyword', 'ga:medium', 'ga:pagePath'];
-$dimensionRules = ['contain', 'regexp', 'exact'];
+$dimensionShow = ['show'];
+$dimensionFilters = ['ga:pagePath'];
+$dimensionRules = ['exact'];
+$dimensionValues = ['/san-pham/184/ly-coc.html'];
 
 //filters
 $filters = [];
 $group_filters = [];
 $group_filters['dimensions'] = Utils::groupFilters(
-    $dimensionShow[0],
-    $dimensionFilters[2],
-    $dimensionRules[2],
-    '/san-pham/184/ly-coc.html'
+    $dimensionShow,
+    $dimensionFilters,
+    $dimensionRules,
+    $dimensionValues
 );
 
 //filter by dimensions
 $filters[] = Utils::encodeDimensionFilters($group_filters['dimensions']);
 
 //filter by metrics
-
 
 $options['filters'] = implode(';', $filters);
 

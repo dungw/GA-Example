@@ -4,7 +4,7 @@
         <tr>
             <th colspan="<?= (count($report['columnHeaders']) + 1) ?>">
                 <h2>Report</h2>
-                <span>Total: <?= $report['totalResults'] ?></span>
+                <span>Total: </span>
             </th>
         </tr>
         <tr class="h">

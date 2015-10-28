@@ -181,7 +181,7 @@ class GA_Service
         // 	$dimensions = array( $dimensions );
         $dimensions = implode(",", $dimensions);
         $metrics = implode(",", $metrics);
-
+var_dump($addition);die;
         try {
             $analytics = new Google_Service_Analytics($this->client);
             $options = [];
@@ -191,6 +191,7 @@ class GA_Service
 
             //add order by
             if (isset($addition['sort'])) $options['sort'] = $addition['sort'];
+            if (isset($addition['filters'])) $options['filters'] = $addition['filters'];
 
             $data = $analytics->data_ga->get($view, $start_date, $end_date, $metrics,
                 $options
