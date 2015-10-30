@@ -34,19 +34,19 @@ $segments = $controller->segments();
 $dimensions = ['ga:previousPagePath'];
 
 //metrics
-$metrics = ['ga:users'];
+$metrics = ['ga:users', 'ga:pageviews'];
 
 //options
 $options = [];
 
 //order by
-$options['sort'] = Utils::encodeOrderby(Utils::groupOrderby(['ga:users'], ['-']));
+$options['sort'] = Utils::encodeOrderby(Utils::groupOrderby(['ga:pageviews'], ['-']));
 
 //filters
 $filters = [];
 $group_filters = [];
 $group_filters['dimensions'] = Utils::groupFilters([
-    ['show', 'ga:pagePath', 'exact', '/san-pham/184/ly-coc.html'],
+    ['show', 'ga:pagePath', 'exact', '/san-pham/186/noi-chao.html'],
 ]);
 
 //filter by dimensions
