@@ -10,6 +10,7 @@ use Google_Http_Request;
 class GA_Service
 {
     const MAX_RESULTS = 1000;
+    const DATE_FORMAT = 'Y-m-d';
 
     protected $client;
 
@@ -174,14 +175,14 @@ class GA_Service
 
         // query the last month analytics
         $now = new \DateTime();
-        $end_date = $now->format('Y-m-d');
-        $start_date = $now->modify('-1 month')->format('Y-m-d');
+        $end_date = isset($addition['end_date']) ? $addition['end_date'] : $now->format(self::DATE_FORMAT);
+        $start_date = isset($addition['start_date']) ? $addition['start_date'] : $now->modify('-1 month')->format(self::DATE_FORMAT);
 
         // if( !is_array( $dimensions ) )
         // 	$dimensions = array( $dimensions );
         $dimensions = implode(",", $dimensions);
         $metrics = implode(",", $metrics);
-var_dump($addition);die;
+
         try {
             $analytics = new Google_Service_Analytics($this->client);
             $options = [];

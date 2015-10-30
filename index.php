@@ -31,45 +31,23 @@ $segments = $controller->segments();
 /****************** REPORT ****************/
 
 //dimensions
-$dimensions = [
-    'ga:hostname',
-    'ga:pagePath',
-    'ga:previousPagePath',
-    'ga:pagePathLevel1',
-    'ga:pagePathLevel2',
-    'ga:pagePathLevel3',
-    'ga:pagePathLevel4',
-    'ga:source',
-    'ga:medium',
-    'ga:sourceMedium'
-];
+$dimensions = ['ga:previousPagePath'];
 
 //metrics
-$metrics = ['ga:sessions'];
+$metrics = ['ga:users'];
 
 //options
 $options = [];
 
 //order by
-$orders = ['ga:sessions'];
-$orderRules = ['-'];
-$options['sort'] = Utils::encodeOrderby(Utils::groupOrderby($orders, $orderRules));
-
-//define filters
-$dimensionShow = ['show'];
-$dimensionFilters = ['ga:pagePath'];
-$dimensionRules = ['exact'];
-$dimensionValues = ['/san-pham/184/ly-coc.html'];
+$options['sort'] = Utils::encodeOrderby(Utils::groupOrderby(['ga:users'], ['-']));
 
 //filters
 $filters = [];
 $group_filters = [];
-$group_filters['dimensions'] = Utils::groupFilters(
-    $dimensionShow,
-    $dimensionFilters,
-    $dimensionRules,
-    $dimensionValues
-);
+$group_filters['dimensions'] = Utils::groupFilters([
+    ['show', 'ga:pagePath', 'exact', '/san-pham/184/ly-coc.html'],
+]);
 
 //filter by dimensions
 $filters[] = Utils::encodeDimensionFilters($group_filters['dimensions']);
@@ -77,6 +55,10 @@ $filters[] = Utils::encodeDimensionFilters($group_filters['dimensions']);
 //filter by metrics
 
 $options['filters'] = implode(';', $filters);
+
+//date range
+$options['start_date'] = '2015-09-01';
+$options['end_date'] = '2015-11-01';
 
 //GET THE REPORT
 $report = $controller->report($dimensions, $metrics, $views[0]->id, $options);

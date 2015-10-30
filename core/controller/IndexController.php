@@ -85,5 +85,6 @@ class IndexController
 
         return $segments;
     }
+
 }
 

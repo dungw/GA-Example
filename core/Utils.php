@@ -37,22 +37,23 @@ class Utils
         return implode(',', $res);
     }
 
-    public static function groupFilters(array $show, array $filters, array $rules, array $values)
+    public static function groupFilters($filters)
     {
         $count = count($filters);
         $group_filters = [];
 
-        for ($i = 0; $i < $count; $i++) {
-            // skip if no value is provided
-            if (empty($values[$i]))
-                continue;
+        if ($count > 0) {
+            foreach ($filters as $filter) {
 
-            $group_filters[] = [
-                'show' => $show[$i],
-                'column' => $filters[$i],
-                'rule' => $rules[$i],
-                'val' => $values[$i]
-            ];
+                if (empty($filter[3])) continue;
+                $group_filters[] = [
+                    'show'      => $filter[0],
+                    'column'    => $filter[1],
+                    'rule'      => $filter[2],
+                    'val'       => $filter[3],
+                ];
+
+            }
         }
 
         return $group_filters;
@@ -82,10 +83,9 @@ class Utils
             }
 
             $url[] = "{$filter['column']}{$operator}{$filter['val']}";
-        }//foreach
+        }
 
         $uri = implode(";", $url);
-        //$uri = urlencode($uri);
 
         return $uri;
     }
