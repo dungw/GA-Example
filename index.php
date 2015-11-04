@@ -31,7 +31,7 @@ $segments = $controller->segments();
 /****************** REPORT ****************/
 
 //dimensions
-$dimensions = ['ga:previousPagePath'];
+$dimensions = ['ga:previousPagePath', 'ga:fullReferrer'];
 
 //metrics
 $metrics = ['ga:users', 'ga:pageviews'];
